@@ -1,0 +1,28 @@
+[Unit]
+Description=Hanma Python Application
+After=network-online.target
+
+[Container]
+# Image source from your gitea registry
+Image={{ site_podman_image }}
+ContainerName=hanma
+HostName=hanma
+User=0
+
+# Volume mappings using %h for /home/hanma/
+Volume={{ site_path }}/conf/hanma.yml:/hanma/conf/hanma.yml:z
+Volume={{ site_path }}/site:/site:z
+
+# Port mapping: host 8005 to container 8000
+PublishPort={{ site_port }}:8000
+
+# This is the command/argument at the end of your script
+Exec=/site
+
+[Service]
+# Ensures the container restarts automatically
+Restart=always
+
+[Install]
+# Allows the service to be enabled to start on login/boot
+WantedBy=default.target

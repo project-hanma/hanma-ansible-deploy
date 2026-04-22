@@ -1,0 +1,79 @@
+---
+- name: Deploy Hanma
+  hosts: all
+  gather_facts: false
+  become: false
+
+  vars_files:
+    - dashboard_vars.yml
+
+  tasks:
+    - name: Ensure latest Hanma Podman image is present
+      containers.podman.podman_image:
+        name: "{{ site_podman_image }}"
+        tag: latest
+
+    - name: Ensure quadlet directory exists
+      ansible.builtin.file:
+        path: "/home/{{ site_owner }}/{{ site_quadlet_path }}"
+        state: directory
+        owner: "{{ site_owner }}"
+        group: "{{ site_group }}"
+        mode: "u=rwx,g-rwx,o-rwx"
+
+    - name: Deploy Hanma quadlet
+      ansible.builtin.template:
+        src: hanma.container.j2
+        dest: "/home/{{ site_owner }}/{{ site_quadlet_path }}/hanma.container"
+        owner: "{{ site_owner }}"
+        group: "{{ site_group }}"
+        mode: "u=rw,g-rwx,o-rwx"
+      notify:
+        - Reload systemd units
+        - Restart Hanma
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Ensure site directory exists
+      ansible.builtin.file:
+        path: "{{ site_path }}"
+        state: directory
+        owner: "{{ site_owner }}"
+        group: "{{ site_group }}"
+        mode: "u=rwx,g-rwx,o-rwx"
+
+    - name: Deploy site from Git
+      ansible.builtin.git:
+        repo: "{{ site_repo }}"
+        dest: "{{ site_path }}"
+        version: main
+        force: true
+      notify:
+        - Ensure correct site permissions
+
+    - name: Start Hanma
+      ansible.builtin.systemd_service:
+        name: hanma.service
+        state: started
+        scope: user
+
+  handlers:
+    - name: Ensure correct site permissions
+      ansible.builtin.file:
+        path: "{{ site_path }}"
+        state: directory
+        owner: "{{ site_owner }}"
+        group: "{{ site_group }}"
+        recurse: true
+
+    - name: Reload systemd units
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+        scope: user
+
+    - name: Restart Hanma
+      ansible.builtin.systemd_service:
+        name: hanma.service
+        state: restarted
+        scope: user
