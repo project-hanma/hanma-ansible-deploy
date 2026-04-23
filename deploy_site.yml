@@ -1,11 +1,11 @@
 ---
 - name: Deploy Hanma
-  hosts: all
+  hosts: "{{ site_deploy | default('dashboard_dev', true) }}"
   gather_facts: false
   become: false
 
   vars_files:
-    - dashboard_vars.yml
+    - "{{ site_deploy | default('dashboard_dev', true) }}.yml"
 
   tasks:
     - name: Ensure latest Hanma Podman image is present
@@ -32,9 +32,6 @@
         - Reload systemd units
         - Restart Hanma
 
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
-
     - name: Ensure site directory exists
       ansible.builtin.file:
         path: "{{ site_path }}"
@@ -51,6 +48,9 @@
         force: true
       notify:
         - Ensure correct site permissions
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
 
     - name: Start Hanma
       ansible.builtin.systemd_service:
