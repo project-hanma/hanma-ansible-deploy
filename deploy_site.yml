@@ -1,11 +1,11 @@
 ---
 - name: Deploy Hanma
-  hosts: "{{ site_deploy | default('dashboard_dev', true) }}"
+  hosts: "{{ site_deploy | default('hanma_dev', true) }}"
   gather_facts: false
   become: false
 
   vars_files:
-    - "{{ site_deploy | default('dashboard_dev', true) }}.yml"
+    - "{{ site_deploy | default('hanma_dev', true) }}.yml"
 
   tasks:
     - name: Ensure latest Hanma Podman image is present
@@ -15,7 +15,7 @@
 
     - name: Ensure quadlet directory exists
       ansible.builtin.file:
-        path: "/home/{{ site_owner }}/{{ site_quadlet_path }}"
+        path: "{{ site_quadlet_path | dirname }}"
         state: directory
         owner: "{{ site_owner }}"
         group: "{{ site_group }}"
@@ -24,7 +24,7 @@
     - name: Deploy Hanma quadlet
       ansible.builtin.template:
         src: hanma.container.j2
-        dest: "/home/{{ site_owner }}/{{ site_quadlet_path }}/hanma.container"
+        dest: "{{ site_quadlet_path }}"
         owner: "{{ site_owner }}"
         group: "{{ site_group }}"
         mode: "u=rw,g-rwx,o-rwx"
@@ -34,7 +34,7 @@
 
     - name: Ensure site directory exists
       ansible.builtin.file:
-        path: "{{ site_path }}"
+        path: "{{ site_deploy_path }}"
         state: directory
         owner: "{{ site_owner }}"
         group: "{{ site_group }}"
@@ -43,7 +43,7 @@
     - name: Deploy site from Git
       ansible.builtin.git:
         repo: "{{ site_repo }}"
-        dest: "{{ site_path }}"
+        dest: "{{ site_deploy_path }}"
         version: main
         force: true
       notify:
@@ -54,14 +54,14 @@
 
     - name: Start Hanma
       ansible.builtin.systemd_service:
-        name: hanma.service
+        name: "{{ site_container_name }}.service"
         state: started
         scope: user
 
   handlers:
     - name: Ensure correct site permissions
       ansible.builtin.file:
-        path: "{{ site_path }}"
+        path: "{{ site_deploy_path }}"
         state: directory
         owner: "{{ site_owner }}"
         group: "{{ site_group }}"
@@ -74,6 +74,6 @@
 
     - name: Restart Hanma
       ansible.builtin.systemd_service:
-        name: hanma.service
+        name: "{{ site_container_name }}.service"
         state: restarted
         scope: user

@@ -3,6 +3,7 @@ site_podman_image: gitea.thezengarden.net/project-hanma/hanma:latest
 site_repo: https://gitea.thezengarden.net/project-hanma/zen-garden-dashboard-site.git
 site_owner: hanma
 site_group: hanma
-site_path: /home/hanma/hanma-prod
-site_quadlet_path: ".config/containers/systemd"
+site_deploy_path: "/home/{{ site_owner }}/hanma-prod"
+site_container_name: hanma-prod
+site_quadlet_path: "/home/{{ site_owner }}/.config/containers/systemd/{{ site_container_name }}.container"
 site_port: 8005

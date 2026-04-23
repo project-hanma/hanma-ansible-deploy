@@ -5,13 +5,13 @@ After=network-online.target
 [Container]
 # Image source from your gitea registry
 Image={{ site_podman_image }}
-ContainerName=hanma
-HostName=hanma
+ContainerName={{ site_container_name }}
+HostName={{ site_container_name }}
 User=0
 
 # Volume mappings using %h for /home/hanma/
-Volume={{ site_path }}/conf/hanma.yml:/hanma/conf/hanma.yml:z
-Volume={{ site_path }}/site:/site:z
+Volume={{ site_deploy_path }}/conf/hanma.yml:/hanma/conf/hanma.yml:z
+Volume={{ site_deploy_path }}/site:/site:z
 
 # Port mapping: host 8005 to container 8000
 PublishPort={{ site_port }}:8000
