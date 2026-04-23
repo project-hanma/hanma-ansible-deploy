@@ -5,13 +5,13 @@
   become: false
 
   vars_files:
-    - "{{ site_deploy | default('hanma_dev', true) }}.yml"
+    - "vars/{{ site_deploy | default('hanma_dev', true) }}.yml"
 
   tasks:
     - name: Ensure latest Hanma Podman image is present
       containers.podman.podman_image:
         name: "{{ site_podman_image }}"
-        tag: latest
+        pull: true
 
     - name: Ensure quadlet directory exists
       ansible.builtin.file:
@@ -44,10 +44,12 @@
       ansible.builtin.git:
         repo: "{{ site_repo }}"
         dest: "{{ site_deploy_path }}"
-        version: main
+        version: "{{ site_repo_version | default('main') }}"
         force: true
-      notify:
-        - Ensure correct site permissions
+
+    - name: Ensure linger is enabled for user
+      ansible.builtin.command: "loginctl enable-linger {{ site_owner }}"
+      changed_when: false
 
     - name: Flush handlers
       ansible.builtin.meta: flush_handlers
@@ -59,14 +61,6 @@
         scope: user
 
   handlers:
-    - name: Ensure correct site permissions
-      ansible.builtin.file:
-        path: "{{ site_deploy_path }}"
-        state: directory
-        owner: "{{ site_owner }}"
-        group: "{{ site_group }}"
-        recurse: true
-
     - name: Reload systemd units
       ansible.builtin.systemd_service:
         daemon_reload: true

@@ -1,6 +1,7 @@
 ---
 site_podman_image: gitea.thezengarden.net/project-hanma/hanma:develop
 site_repo: https://gitea.thezengarden.net/project-hanma/zen-garden-dev-site.git
+site_repo_version: develop
 site_owner: hanma-dev
 site_group: hanma-dev
 site_deploy_path: "/home/{{ site_owner }}/hanma-dev"

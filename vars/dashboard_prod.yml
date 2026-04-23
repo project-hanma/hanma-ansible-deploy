@@ -1,6 +1,7 @@
 ---
 site_podman_image: gitea.thezengarden.net/project-hanma/hanma:latest
 site_repo: https://gitea.thezengarden.net/project-hanma/zen-garden-dashboard-site.git
+site_repo_version: main
 site_owner: hanma
 site_group: hanma
 site_deploy_path: "/home/{{ site_owner }}/hanma-prod"
