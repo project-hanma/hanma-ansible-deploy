@@ -46,6 +46,8 @@
         dest: "{{ site_deploy_path }}"
         version: "{{ site_repo_version | default('main') }}"
         force: true
+      notify:
+        - Restart Hanma
 
     - name: Ensure linger is enabled for user
       ansible.builtin.command: "loginctl enable-linger {{ site_owner }}"
