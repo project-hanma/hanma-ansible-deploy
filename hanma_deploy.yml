@@ -1,0 +1,61 @@
+---
+- name: Build and Deploy Hanma
+  hosts: "{{ site_deploy | default('hanma_dev', true) }}"
+  gather_facts: false
+  become: false
+
+  vars_files:
+    - "vars/{{ site_deploy | default('hanma_dev', true) }}.yml"
+
+  tasks:
+    - name: Check if Podman image list for Hanma
+      containers.podman.podman_image_info:
+        name: "{{ podman_build_image_name }}"
+      register: podman_check_images
+
+    - name: Determine if the Hanma image exists on host
+      ansible.builtin.set_fact:
+        hanma_image_exists: "{{ (podman_check_images['images'] | length > 0) | ternary(true, false) }}"
+
+    - name: Pull Hanma image from registry or build if it doesnt exist
+      when:
+        - not hanma_image_exists | bool
+      block:
+        - name: Pull the image from registy
+          containers.podman.podman_image:
+            name: "{{ podman_build_image_name }}"
+            pull: true
+      rescue:
+        - name: Image doesn't exist
+          ansible.builtin.debug:
+            msg: |
+              Hanma image doesn't exist locally or on the registry. Building image...
+
+        - name: Build Podman container image
+          ansible.builtin.include_role:
+            name: podman_build
+
+    - name: Deploy Hanma Podman quadlet
+      ansible.builtin.include_role:
+        name: podman_quadlet
+
+    # More used for local testing rather than AAP execution
+    - name: Clean and create staging area
+      ansible.builtin.include_role:
+        name: clean_stage_area
+      when:
+        - clean_deploy | default(false, true) | bool
+
+    - name: Enable login linger for {{ site_owner }}
+      ansible.builtin.include_role:
+        name: enable_linger
+
+    - name: Deploy site
+      ansible.builtin.include_role:
+        name: "{{ site_repo is defined | ternary('git_site', 'local_site') }}"
+
+    - name: Ensure Hanma is running
+      ansible.builtin.systemd_service:
+        name: "{{ site_container_name }}.service"
+        state: started
+        scope: user

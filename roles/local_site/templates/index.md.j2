@@ -1,0 +1,22 @@
+---
+title: "the zen garden: Pi"
+description: The little Pi endures...
+---
+
+## Uptime:
+```text
+{{ local_site_uptime['stdout'] | trim }}
+```
+
+## Host Info:
+```text
+{{ local_site_hostnamectl['stdout'] | trim }}
+```
+
+## LSCPU
+```text
+{{ local_site_lscpu['stdout'] | trim }}
+```
+
+
+**半**

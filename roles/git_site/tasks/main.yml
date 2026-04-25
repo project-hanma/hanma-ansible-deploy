@@ -1,0 +1,16 @@
+---
+- name: Ensure deployment paths are present
+  ansible.builtin.file:
+    path: "{{ site_deploy_path }}"
+    state: directory
+    owner: "{{ site_owner }}"
+    group: "{{ site_group }}"
+    mode: "u=rwx,g-rwx,o-rwx"
+
+- name: Deploy site from Git
+  ansible.builtin.git:
+    repo: "{{ site_repo }}"
+    dest: "{{ site_deploy_path }}"
+    version: "{{ site_repo_version | default('main') }}"
+    force: true
+  notify: Restart Hanma
