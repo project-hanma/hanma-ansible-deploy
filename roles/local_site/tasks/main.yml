@@ -28,10 +28,13 @@
 
 # Permissions are set on sync; no-qa used
 - name: Deploy site files to staging area
-  when:
-    - site_repo is not defined
   delegate_to: localhost
   block:
+    # More used for local testing rather than AAP execution
+    - name: Clean and create staging area
+      ansible.builtin.include_role:
+        name: clean_stage_area
+
     - name: Deploy index page to staging area # noqa: risky-file-permissions
       ansible.builtin.template:
         src: index.md.j2
