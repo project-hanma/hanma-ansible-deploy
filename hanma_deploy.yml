@@ -39,13 +39,6 @@
       ansible.builtin.include_role:
         name: podman_quadlet
 
-    # More used for local testing rather than AAP execution
-    - name: Clean and create staging area
-      ansible.builtin.include_role:
-        name: clean_stage_area
-      when:
-        - clean_deploy | default(false, true) | bool
-
     - name: Enable login linger for {{ site_owner }}
       ansible.builtin.include_role:
         name: enable_linger
