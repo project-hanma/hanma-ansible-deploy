@@ -1,0 +1,18 @@
+---
+- name: Ensure quadlet directory exists
+  ansible.builtin.file:
+    path: "{{ site_quadlet_path | dirname }}"
+    state: directory
+    owner: "{{ site_owner }}"
+    group: "{{ site_group }}"
+    mode: "u=rwx,g-rwx,o-rwx"
+
+- name: Create quadlet for Hanma
+  ansible.builtin.template:
+    src: templates/podman_quadlet.j2
+    dest: "{{ site_quadlet_path }}"
+    owner: "{{ site_owner }}"
+    group: "{{ site_group }}"
+    mode: "u=rw,g-rwx,o-rwx"
+  notify:
+    - Reload systemd

@@ -1,0 +1,4 @@
+---
+- name: Ensure linger is enabled for user
+  ansible.builtin.command: "loginctl enable-linger {{ site_owner }}"
+  changed_when: false

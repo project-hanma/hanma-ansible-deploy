@@ -1,0 +1,12 @@
+---
+- name: Synchronize staging directory to remote site
+  ansible.posix.synchronize:
+    src: "{{ hanma_stage_directory }}_{{ site_container_name }}/"
+    dest: "{{ site_content_path }}"
+    recursive: true
+    delete: true
+    archive: true
+    set_remote_user: true
+    rsync_opts:
+      - "--chmod=D0700,F0600"
+      - "--chown={{ site_owner }}:{{ site_group }}"

@@ -1,0 +1,48 @@
+---
+# Deploy site, quadlet, etc as per 'deploy_site.yml'
+#
+# Below tasks are still needed:
+- name: Gather system info
+  ansible.builtin.import_tasks: gather_sys_info.yml
+
+- name: Ensure deployment paths are present
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ site_owner }}"
+    group: "{{ site_group }}"
+    mode: "u=rwx,g-rwx,o-rwx"
+  loop:
+    - "{{ site_deploy_path }}"
+    - "{{ site_config_path }}"
+    - "{{ site_content_path }}"
+
+- name: Deploy Hanma configuration file
+  ansible.builtin.copy:
+    src: files/conf/hanma.yml
+    dest: "{{ site_config_path }}"
+    owner: "{{ site_owner }}"
+    group: "{{ site_group }}"
+    mode: "u=rw,g-rwx,o-rwx"
+  notify: Restart Hanma
+
+# Permissions are set on sync; no-qa used
+- name: Deploy site files to staging area
+  when:
+    - site_repo is not defined
+  delegate_to: localhost
+  block:
+    - name: Deploy index page to staging area # noqa: risky-file-permissions
+      ansible.builtin.template:
+        src: index.md.j2
+        dest: "{{ hanma_stage_directory }}_{{ site_container_name }}/index.md"
+
+    # Permissions are set on sync; no-qa used
+    - name: Deploy static pages to staging area # noqa: risky-file-permissions
+      ansible.builtin.copy:
+        src: "files/site/"
+        dest: "{{ hanma_stage_directory }}_{{ site_container_name }}"
+
+- name: Push site to destination host
+  ansible.builtin.include_role:
+    name: synchronize_site

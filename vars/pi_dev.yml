@@ -1,17 +1,21 @@
 ---
-site_repo: https://gitea.thezengarden.net/project-hanma/zen-garden-dashboard-site.git
-site_repo_version: main
+# Hanma Local Deployment Vars:
+hanma_stage_directory: /tmp/hanma_site_stage
+
+# Site Vars:
+# site_repo / site_repo_version aren't needed as its deployed
+# via roles/local_site -- those variables are only needed for roles/git_site
 site_owner: hanma
 site_group: hanma
-site_deploy_path: "/home/{{ site_owner }}/hanma-prod"
+site_deploy_path: "/home/{{ site_owner }}/hanma-dev"
 site_config_path: "{{ site_deploy_path }}/conf"
 site_content_path: "{{ site_deploy_path }}/site"
-site_container_name: hanma-prod
+site_container_name: hanma-pi
 site_quadlet_path: "/home/{{ site_owner }}/.config/containers/systemd/{{ site_container_name }}.container"
-site_port: 8005
+site_port: 8055
 
 # Podman Image Build Vars:
-podman_build_image_name: "gitea.thezengarden.net/project-hanma/hanma:latest"
+podman_build_image_name: "gitea.thezengarden.net/project-hanma/hanma:rpi-latest"
 podman_build_hanma_src: https://gitea.thezengarden.net/project-hanma/hanma.git
 podman_build_hanma_branch: main
 podman_build_build_path: hanma_src

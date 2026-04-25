@@ -1,0 +1,20 @@
+[Unit]
+Description={{ podman_quadlet_description }}
+After={{ podman_quadlet_after }}
+
+[Container]
+Image={{ podman_build_image_name }}
+ContainerName={{ site_container_name }}
+HostName={{ site_container_name }}
+User={{ podman_quadlet_user }}
+{% for volume in podman_quadlet_volumes %}
+Volume={{ volume }}
+{% endfor %}
+PublishPort={{ podman_quadlet_port }}
+Exec={{ podman_quadlet_exec }}
+
+[Service]
+Restart={{ podman_quadlet_restart_policy }}
+
+[Install]
+WantedBy={{ podman_quadlet_wanted_by }}

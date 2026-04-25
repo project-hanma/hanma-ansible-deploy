@@ -1,0 +1,46 @@
+# hanma.yml — default site configuration
+# All values here can be overridden by CLI flags.
+# Comment out any line to revert to the built-in default for that setting.
+
+# Site name shown in the page header
+name: "the zen garden: Pi"
+
+# Base URL for sitemap.xml and absolute URLs in search.json.
+# Leave empty to use relative URLs (sitemap.xml will not be generated).
+# Example: https://example.com
+base_url: ""
+
+# Output directory for generated HTML (relative to hanma.py, or absolute).
+# Default when unset: output/ relative to hanma.py
+output: output/
+
+# Theme to use from the themes/ directory.
+theme: default
+
+# Start the local HTTP server after generating.
+serve: true
+
+# Port for the local HTTP server (only used when serve is true).
+port: 8000
+
+# Address the HTTP server binds to (127.0.0.1 = loopback only, 0.0.0.0 = all interfaces).
+host: 0.0.0.0
+
+# Watch source files and regenerate on changes after the initial build.
+watch: true
+
+# Only regenerate pages whose source file has changed since the last build.
+incremental: true
+
+# Enable search functionality and show the search box.
+search: false
+
+# Sanitize the generated HTML using 'bleach' if available.
+sanitize: true
+
+# Label for the posts listing link in the navigation bar.
+posts_label: Recent Updates
+
+# Timezone for post dates and "last updated" timestamps (e.g., UTC, America/New_York).
+# Default: UTC
+timezone: America/New_York

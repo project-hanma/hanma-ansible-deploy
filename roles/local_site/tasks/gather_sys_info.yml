@@ -1,0 +1,15 @@
+---
+- name: Get system uptime
+  ansible.builtin.command: uptime
+  changed_when: false
+  register: local_site_uptime
+
+- name: Get hostnamectl
+  ansible.builtin.command: hostnamectl
+  changed_when: false
+  register: local_site_hostnamectl
+
+- name: Get lscpu
+  ansible.builtin.command: lscpu
+  changed_when: false
+  register: local_site_lscpu
