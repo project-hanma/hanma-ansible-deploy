@@ -8,5 +8,5 @@
     archive: true
     set_remote_user: true
     rsync_opts:
-      - "--chmod=D0700,F0600"
+      - "--chmod=D{{ synchronize_site_dir_mode }},F{{ synchronize_site_file_mode }}"
       - "--chown={{ site_owner }}:{{ site_group }}"

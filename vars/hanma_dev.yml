@@ -28,3 +28,7 @@ podman_quadlet_exec: "/site"
 podman_quadlet_restart_policy: "always"
 podman_quadlet_wanted_by: "default.target"
 podman_quadlet_after: "network-online.target"
+
+# Synchronize Site Vars:
+synchronize_site_dir_mode: "0700"
+synchronize_site_file_mode: "0600"

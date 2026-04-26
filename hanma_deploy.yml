@@ -45,7 +45,7 @@
 
     - name: Deploy site
       ansible.builtin.include_role:
-        name: "{{ site_repo is defined | ternary('git_site', 'local_site') }}"
+        name: "{{ hanma_stage_directory is defined | ternary('local_site', 'git_site') }}"
 
     - name: Ensure Hanma is running
       ansible.builtin.systemd_service:
