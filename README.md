@@ -13,7 +13,7 @@ This Ansible project is used to build, configure, and deploy the **Hanma** Pytho
   - `podman_quadlet`: Sets up the Podman quadlet `.container` file for systemd integration.
   - `enable_linger`: Enables systemd loginctl linger to allow rootless containers to start automatically and persist after the user logs out.
   - `git_site` / `local_site`: Deploys the site content either by pulling from a Git repository or synchronizing local files.
-  - `clean_stage_area`, `common_handlers`, `synchronize_site`: Utility roles.
+  - `stage_area`, `common_handlers`, `synchronize_site`: Utility roles.
 
 ## Deployment Flow
 
