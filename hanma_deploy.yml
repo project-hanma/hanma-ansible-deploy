@@ -8,16 +8,16 @@
     - "vars/{{ site_deploy | default('hanma_dev', true) }}.yml"
 
   tasks:
-    - name: Check if Podman image list for Hanma
+    - name: Check Podman image list for Hanma
       containers.podman.podman_image_info:
         name: "{{ podman_build_image_name }}"
       register: podman_check_images
 
-    - name: Determine if the Hanma image exists on host
+    - name: Determine if Hanma image was present
       ansible.builtin.set_fact:
         hanma_image_exists: "{{ (podman_check_images['images'] | length > 0) | ternary(true, false) }}"
 
-    - name: Pull Hanma image from registry or build if it doesnt exist
+    - name: Pull Hanma image from the registry or build the image if it doesnt exist upstream
       when:
         - not hanma_image_exists | bool
       block:
