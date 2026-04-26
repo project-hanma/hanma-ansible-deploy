@@ -1,3 +1,5 @@
 .ansible
 collections
 hosts
+vars/*_prod*
+vars/pi*
