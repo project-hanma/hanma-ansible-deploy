@@ -3,8 +3,6 @@
 hanma_stage_directory: /tmp/hanma_site_stage
 
 # Site Vars:
-# site_repo / site_repo_version aren't needed as its deployed
-# via roles/local_site -- those variables are only needed for roles/git_site
 site_owner: hanma
 site_group: hanma
 site_deploy_path: "/home/{{ site_owner }}/hanma-dev"
@@ -31,3 +29,7 @@ podman_quadlet_exec: "/site"
 podman_quadlet_restart_policy: "always"
 podman_quadlet_wanted_by: "default.target"
 podman_quadlet_after: "network-online.target"
+
+# Synchronize Site Vars:
+synchronize_site_dir_mode: "0700"
+synchronize_site_file_mode: "0600"

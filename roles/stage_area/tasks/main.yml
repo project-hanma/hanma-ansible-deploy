@@ -1,10 +1,4 @@
 ---
-- name: Purge site stage area
-  ansible.builtin.file:
-    path: "{{ hanma_stage_directory }}_{{ site_container_name }}"
-    state: absent
-  delegate_to: localhost
-
 - name: Create site staging area
   ansible.builtin.file:
     path: "{{ hanma_stage_directory }}_{{ site_container_name }}"

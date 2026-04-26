@@ -1,7 +1,4 @@
 ---
-# Deploy site, quadlet, etc as per 'deploy_site.yml'
-#
-# Below tasks are still needed:
 - name: Gather system info
   ansible.builtin.import_tasks: gather_sys_info.yml
 
@@ -30,10 +27,10 @@
 - name: Deploy site files to staging area
   delegate_to: localhost
   block:
-    # More used for local testing rather than AAP execution
-    - name: Clean and create staging area
+    - name: Create staging area
       ansible.builtin.include_role:
-        name: clean_stage_area
+        name: stage_area
+        tasks_from: main.yml
 
     - name: Deploy index page to staging area # noqa: risky-file-permissions
       ansible.builtin.template:
@@ -49,3 +46,8 @@
 - name: Push site to destination host
   ansible.builtin.include_role:
     name: synchronize_site
+
+- name: Create staging area
+  ansible.builtin.include_role:
+    name: stage_area
+    tasks_from: clean_stage_area.yml
