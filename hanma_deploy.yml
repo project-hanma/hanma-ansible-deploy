@@ -18,22 +18,25 @@
         hanma_image_exists: "{{ (podman_check_images['images'] | length > 0) | ternary(true, false) }}"
 
     - name: Pull Hanma image from the registry or build the image if it doesnt exist upstream
-      when:
-        - not hanma_image_exists | bool
       block:
         - name: Pull the image from registy
           containers.podman.podman_image:
             name: "{{ podman_build_image_name }}"
             pull: true
+            force: true
       rescue:
-        - name: Image doesn't exist
-          ansible.builtin.debug:
-            msg: |
-              Hanma image doesn't exist locally or on the registry. Building image...
+        - name: Build local image if necessary
+          when:
+            - not hanma_image_exists | bool
+          block:
+            - name: Image doesn't exist
+              ansible.builtin.debug:
+                msg: |
+                  Hanma image doesn't exist locally or on the registry. Building image...
 
-        - name: Build Podman container image
-          ansible.builtin.include_role:
-            name: podman_build
+            - name: Build Podman container image
+              ansible.builtin.include_role:
+                name: podman_build
 
     - name: Deploy Hanma Podman quadlet
       ansible.builtin.include_role:
