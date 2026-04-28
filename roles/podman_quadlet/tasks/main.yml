@@ -16,3 +16,6 @@
     mode: "u=rw,g-rwx,o-rwx"
   notify:
     - Reload systemd
+
+- name: Flush handlers for quadlet update
+  ansible.builtin.meta: flush_handlers
