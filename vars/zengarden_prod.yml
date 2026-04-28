@@ -8,7 +8,7 @@ site_config_path: "{{ site_deploy_path }}/conf"
 site_content_path: "{{ site_deploy_path }}/site"
 site_container_name: thezengarden
 site_quadlet_path: "/home/{{ site_owner }}/.config/containers/systemd/{{ site_container_name }}.container"
-site_port: 8005
+site_port: 8066
 
 # Podman Image Build Vars:
 podman_build_image_name: "gitea.thezengarden.net/project-hanma/hanma:latest"
