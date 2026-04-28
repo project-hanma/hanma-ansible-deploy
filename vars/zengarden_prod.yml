@@ -1,0 +1,33 @@
+---
+site_repo: https://gitea.thezengarden.net/project-hanma/zen-garden-site.git
+site_repo_version: main
+site_owner: zengarden
+site_group: zengarden
+site_deploy_path: "/home/{{ site_owner }}/thezengarden"
+site_config_path: "{{ site_deploy_path }}/conf"
+site_content_path: "{{ site_deploy_path }}/site"
+site_container_name: thezengarden
+site_quadlet_path: "/home/{{ site_owner }}/.config/containers/systemd/{{ site_container_name }}.container"
+site_port: 8005
+
+# Podman Image Build Vars:
+podman_build_image_name: "gitea.thezengarden.net/project-hanma/hanma:latest"
+podman_build_hanma_src: https://gitea.thezengarden.net/project-hanma/hanma.git
+podman_build_hanma_branch: main
+podman_build_build_path: hanma_src
+
+# Podman Quadlet Vars:
+podman_quadlet_description: "Hanma Python Application"
+podman_quadlet_user: "0"
+podman_quadlet_volumes:
+  - "{{ site_config_path }}/hanma.yml:/hanma/conf/hanma.yml:z"
+  - "{{ site_content_path }}:/site:z"
+podman_quadlet_port: "{{ site_port }}:8000"
+podman_quadlet_exec: "/site"
+podman_quadlet_restart_policy: "always"
+podman_quadlet_wanted_by: "default.target"
+podman_quadlet_after: "network-online.target"
+
+# Synchronize Site Vars:
+synchronize_site_dir_mode: "0700"
+synchronize_site_file_mode: "0600"
