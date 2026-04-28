@@ -7,6 +7,9 @@
   vars_files:
     - "vars/{{ site_deploy | default('hanma_dev', true) }}.yml"
 
+  roles:
+    - common_handlers
+
   tasks:
     - name: Check Podman image list for Hanma
       containers.podman.podman_image_info:
@@ -24,6 +27,7 @@
             name: "{{ podman_build_image_name }}"
             pull: true
             force: true
+          notify: Restart Hanma
       rescue:
         - name: Build local image if necessary
           when:
