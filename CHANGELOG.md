@@ -1,0 +1,140 @@
+# Changelog
+
+All notable changes to the **Hanma Ansible Deploy** project will be documented in this file. This project orchestrates rootless Podman deployments for the Hanma Static Site Generator (SSG) utilizing systemd integrations (Quadlets).
+
+---
+
+## 🏯 Milestone 4: Zen Garden Production & Execution Optimizations
+*April 28, 2026*
+
+> [!NOTE]
+> This milestone completes the transition to a fully automated production deployment pipeline for the main Zen Garden website, adding immediate handler flushes and reactive container service restarts.
+
+### Commits
+* **a7ca0fd** — *add flush_handlers* (Chris Hammer)
+  * **Intent:** Ensure that configuration and service updates are applied immediately mid-playbook rather than waiting until the end of the execution block.
+  * **Rationale:** Flushes Ansible handlers immediately in the `podman_quadlet` role task sequence, preventing deployment lag and assuring immediate startup.
+  * **Files Modified:** `roles/podman_quadlet/tasks/main.yml`
+
+* **7ccc817** — *site_port change* (Chris Hammer)
+  * **Intent:** Reconfigure production port allocation for the Zen Garden website container.
+  * **Rationale:** Updated the target host port in the production configuration.
+  * **Files Modified:** `vars/zengarden_prod.yml`
+
+* **055fd82** — *add restart on image change; add the vars/zengarden_prod.yml* (Chris Hammer)
+  * **Intent:** Auto-restart services upon image updates and establish production variables for Zen Garden.
+  * **Rationale:** Integrated automated change-detection to restart systemd container services if the underlying image hash/tag is updated. Added full configuration details for Zen Garden's production release.
+  * **Files Modified:** `hanma_deploy.yml`, `vars/zengarden_prod.yml`
+
+---
+
+## 🏗️ Milestone 3: Perms Variablization, Staging Improvements, and Registry Pull Strategy
+*April 26, 2026*
+
+> [!TIP]
+> Introducing parameterized permissions makes the deploy role compatible across disparate server setups. Coupling this with a registry-first container pull strategy drastically reduces deployment times by avoiding local image building when a remote image exists.
+
+### Commits
+* **6b887f0** — *update: always force pull image from registry with local fallback* (Chris Hammer)
+  * **Intent:** Optimize container deployment speed and image freshness.
+  * **Rationale:** Instructs Podman to pull down updated images from the central registry first, only compiling/building the container image locally if remote retrieval fails.
+  * **Files Modified:** `hanma_deploy.yml`
+
+* **025b642** — *add vars* (Chris Hammer)
+  * **Intent:** Re-establish baseline environment variables for Dev/Prod targets.
+  * **Rationale:** Restores variable payloads and environment-specific configs for target nodes.
+  * **Files Modified:** `.gitignore`, `vars/dashboard_prod.yml`, `vars/pi_dev.yml`
+
+* **714c4f9** — *cleanup* (Chris Hammer)
+  * **Intent:** Eliminate redundant local credentials and expand directory ignores.
+  * **Rationale:** Housekeeping commit to prune unnecessary local overrides from active version control.
+  * **Files Modified:** `.gitignore`, `vars/dashboard_prod.yml`, `vars/pi_dev.yml`
+
+* **263d91e** — *Merge pull request 'perms variablized; move role, update local_site' (#8) from sync-perms into develop* (Chris H.)
+  * **Intent:** Integrate permission variablization branch.
+  * **Rationale:** Incorporates secure, configurable permission sets across directories and files.
+
+* **ba5c3c7** — *perms variablized; move role, update local_site* (Chris Hammer)
+  * **Intent:** Parameterize directory permissions and isolate cleaning routines.
+  * **Rationale:** Moved `clean_stage_area` task files into a broader `stage_area` role structure. Variablized directories with custom ownership/group permissions to secure staging environments and systemd directories.
+  * **Files Modified:** `README.md`, `hanma_deploy.yml`, `roles/local_site/tasks/main.yml`, `roles/stage_area/tasks/clean_stage_area.yml`, `roles/clean_stage_area/tasks/main.yml` (Deleted), `roles/synchronize_site/tasks/main.yml`, `vars/dashboard_prod.yml`, `vars/hanma_dev.yml`, `vars/pi_dev.yml`
+
+* **152c2b4** — *typo; task name update* (Chris Hammer)
+  * **Intent:** Improve logs readability in playbook executions.
+  * **Rationale:** Clarified task names and descriptions inside the playbooks.
+  * **Files Modified:** `hanma_deploy.yml`
+
+---
+
+## 🛠️ Milestone 2: Modular Architecture Refactor & Multi-Site Support
+*April 24, 2026*
+
+> [!IMPORTANT]
+> This represents the single largest architectural shift in the project. The monolithic deploy script was dismantled and refactored into modular, reusable Ansible Roles. Additionally, official documentation and support for Ansible Automation Platform (AAP) were introduced.
+
+| Legacy Monolithic Structure | Modular Role-Based Structure (New) |
+| :--- | :--- |
+| `deploy_site.yml` (79 lines of tasks) | `hanma_deploy.yml` (Orchestrator playbook) |
+| inline commands | `roles/podman_build` (Modular builds) |
+| static unit templates | `roles/podman_quadlet` (Systemd Quadlet spec) |
+| manual directory setups | `roles/stage_area` & `roles/local_site` |
+| no linting standards | `.ansible-lint` config integrated |
+
+### Commits
+* **bf7ac6a** — *docs: Add README.md detailing ansible deployment* (Chris Hammer)
+  * **Intent:** Provide a user-facing technical reference for the deployment pipeline.
+  * **Rationale:** Authored complete documentation of architecture, inventory setups, role capabilities, variables, and quick-start instructions.
+  * **Files Modified:** `README.md`
+
+* **9bff8be** — *Fixes to support AAP properly* (Chris Hammer)
+  * **Intent:** Establish compatibility with Ansible Automation Platform runner engines.
+  * **Rationale:** Patched runner environments to prevent root execution issues on AAP nodes.
+  * **Files Modified:** `hanma_deploy.yml`, `roles/local_site/tasks/main.yml`
+
+* **456fb09** — *Refactor to support all sites* (Chris Hammer)
+  * **Intent:** Transition the deployment engine into a highly scalable, multi-site architecture.
+  * **Rationale:** Deleted the monolithic `deploy_site.yml` in favor of a clean orchestrator (`hanma_deploy.yml`) coupled with dedicated Ansible roles:
+    * `podman_build`: Manages image builds.
+    * `podman_quadlet`: Generates systemd integration templates.
+    * `local_site` & `git_site`: Facilitates either local files sync or remote git repository checkouts.
+    * `enable_linger`: Configures persistent user lingering.
+  * **Files Modified:** `.ansible-lint`, `deploy_site.yml` (Deleted), `hanma_deploy.yml`, `roles/*` (New Roles), `vars/dashboard_prod.yml`, `vars/hanma_dev.yml`, `vars/pi_dev.yml`
+
+---
+
+## ✅ Milestone 1: Playbook Initiation & Containerization Setup
+*April 22 – April 23, 2026*
+
+> [!NOTE]
+> The starting phase focused on creating the initial Ansible scaffold, testing local/production host options, and configuring automated CI/CD checks via Gitea Actions.
+
+### Commits
+* **85785a1** — *remove notify* (Chris Hammer)
+  * **Intent:** Revert experimental systemd notify handler.
+  * **Files Modified:** `deploy_site.yml`
+
+* **752317b** — *add notify* (Chris Hammer)
+  * **Intent:** Hook change notifications into the deployment task flow.
+  * **Files Modified:** `deploy_site.yml`
+
+* **bf098da** — *branch change for dev* (Chris Hammer)
+  * **Intent:** Point developer configs to target development branch.
+  * **Files Modified:** `vars/hanma_dev.yml`
+
+* **b68728d** — *further refinements to code and vars* (Chris Hammer)
+  * **Intent:** Finetuning configuration settings and port variables.
+  * **Files Modified:** `deploy_site.yml`, `vars/dashboard_prod.yml`, `vars/hanma_dev.yml`
+
+* **d93ff4b** — *refinements to code and vars* (Chris Hammer)
+  * **Intent:** Standardize site properties and remove development overrides.
+  * **Files Modified:** `deploy_site.yml`, `templates/hanma.container.j2`, `vars/dashboard_dev.yml` (Deleted), `vars/dashboard_prod.yml`, `vars/hanma_dev.yml`
+
+* **ef1ab12** — *much dynamic, many wow* (Chris Hammer)
+  * **Intent:** Introduce dynamic path evaluation and automated pipeline linting.
+  * **Rationale:** Configured Gitea linting workflows to ensure clean Ansible syntax on future commits, split target environments into dev vs. prod, and dynamically loaded specific variables.
+  * **Files Modified:** `.ci.env`, `.gitea/workflows/ansible-lint.yml`, `deploy_site.yml`, `vars/dashboard_dev.yml`, `vars/dashboard_prod.yml`
+
+* **b08acd1** — *initial* (Chris Hammer)
+  * **Intent:** Scaffolding the basic deployment repository.
+  * **Rationale:** Established repository defaults including `ansible.cfg`, custom systemd quadlet container template (`templates/hanma.container.j2`), a basic `deploy_site.yml` script, and initial host variables.
+  * **Files Modified:** `.gitignore`, `ansible.cfg`, `deploy_site.yml`, `requirements.yml`, `templates/hanma.container.j2`, `vars/dashboard_vars.yml`
