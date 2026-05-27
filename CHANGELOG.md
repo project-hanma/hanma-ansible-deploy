@@ -11,6 +11,16 @@ All notable changes to the **Hanma Ansible Deploy** project will be documented i
 > This milestone focuses on infrastructure security and deployment determinism. By implementing unprivileged container namespaces and resilient task orchestration, the project now adheres to higher security standards and guarantees cleanup of sensitive staging artifacts even during failed executions.
 
 ### Commits
+* **b6975db** — *ansible.cfg/minor debug formatting tweak* (Chris Hammer)
+  * **Intent:** Clean up configuration defaults and refine debug output.
+  * **Rationale:** Pruned redundant settings from `ansible.cfg` (e.g., `forks`, `host_key_checking`) to improve readability. Applied YAML block scalar chomping (`|-`) to the container build debug message in the main playbook for cleaner log output.
+  * **Files Modified:** `ansible.cfg`, `hanma_deploy.yml`
+
+* **cce964f** — *chore: remove stale and unused hanma.container.j2 template* (Chris Hammer)
+  * **Intent:** Decommission legacy container templates.
+  * **Rationale:** Removed `templates/hanma.container.j2`, an obsolete artifact superseded by the modular `podman_quadlet` role. This cleanup ensures the codebase remains focused on the active Quadlet-based architecture.
+  * **Files Modified:** `templates/hanma.container.j2` (Deleted)
+
 * **21c1ce9** — *chore: address security audit findings for unprivileged execution and deployment reliability* (Chris Hammer)
   * **Intent:** Close security gaps and enhance the robustness of the deployment lifecycle.
   * **Rationale:**
