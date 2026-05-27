@@ -25,7 +25,7 @@
           block:
             - name: Image doesn't exist
               ansible.builtin.debug:
-                msg: |
+                msg: |-
                   Hanma image doesn't exist on the registry. Building image.
 
             - name: Build Podman container image
