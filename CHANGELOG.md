@@ -4,6 +4,25 @@ All notable changes to the **Hanma Ansible Deploy** project will be documented i
 
 ---
 
+## 🛡️ Milestone 5: Security Hardening & Deployment Reliability
+*May 26 – May 27, 2026*
+
+> [!IMPORTANT]
+> This milestone focuses on infrastructure security and deployment determinism. By implementing unprivileged container namespaces and resilient task orchestration, the project now adheres to higher security standards and guarantees cleanup of sensitive staging artifacts even during failed executions.
+
+### Commits
+* **21c1ce9** — *chore: address security audit findings for unprivileged execution and deployment reliability* (Chris Hammer)
+  * **Intent:** Close security gaps and enhance the robustness of the deployment lifecycle.
+  * **Rationale:**
+    * **Unprivileged Hardening:** Transitions container execution to a non-root service user (UID 1000). Implemented `UserNS=keep-id:uid=1000,gid=1000` mapping to bridge host-to-container permission gaps for high-numbered host UIDs.
+    * **Resilient Cleanup:** Restructured the `local_site` role using a `block/always` construct to guarantee the removal of temporary staging directories in `/tmp` regardless of task success or failure.
+    * **Idempotency Updates:** Added filesystem state checks to the `enable_linger` role to prevent redundant systemd commands.
+    * **Build Determinism:** Forced image rebuilds using the `force: true` flag in the Podman build module and integrated post-build image pruning to maintain host disk health.
+    * **Service Logic Optimization:** Refactored service start and restart operations into a single, declarative task using ternary state logic.
+  * **Files Modified:** `hanma_deploy.yml`, `roles/common_handlers/handlers/main.yml`, `roles/enable_linger/tasks/main.yml`, `roles/local_site/tasks/main.yml`, `roles/podman_build/tasks/main.yml`, `roles/podman_quadlet/tasks/main.yml`, `roles/podman_quadlet/templates/podman_quadlet.j2`, `vars/dashboard_prod.yml`, `vars/hanma_dev.yml`, `vars/pi_dev.yml`, `vars/zengarden_prod.yml`
+
+---
+
 ## 🏯 Milestone 4: Zen Garden Production & Execution Optimizations
 *April 28, 2026*
 

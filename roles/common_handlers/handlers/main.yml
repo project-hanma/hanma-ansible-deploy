@@ -4,8 +4,12 @@
     daemon_reload: true
     scope: user
 
+# - name: Restart Hanma
+#   ansible.builtin.systemd_service:
+#     name: "{{ site_container_name }}.service"
+#     state: restarted
+#     scope: user
+
 - name: Restart Hanma
-  ansible.builtin.systemd_service:
-    name: "{{ site_container_name }}.service"
-    state: restarted
-    scope: user
+  ansible.builtin.set_fact:
+    restart_site: true

@@ -20,7 +20,7 @@ podman_build_build_path: hanma_src
 
 # Podman Quadlet Vars:
 podman_quadlet_description: "Hanma Python Application"
-podman_quadlet_user: "0"
+podman_quadlet_user: "1000"
 podman_quadlet_volumes:
   - "{{ site_config_path }}/hanma.yml:/hanma/conf/hanma.yml:z"
   - "{{ site_content_path }}:/site:z"

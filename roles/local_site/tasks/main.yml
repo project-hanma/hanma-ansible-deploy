@@ -43,11 +43,12 @@
         src: "files/site/"
         dest: "{{ hanma_stage_directory }}_{{ site_container_name }}"
 
-- name: Push site to destination host
-  ansible.builtin.include_role:
-    name: synchronize_site
+    - name: Push site to destination host
+      ansible.builtin.include_role:
+        name: synchronize_site
 
-- name: Create staging area
-  ansible.builtin.include_role:
-    name: stage_area
-    tasks_from: clean_stage_area.yml
+  always:
+    - name: Purge site staging area
+      ansible.builtin.include_role:
+        name: stage_area
+        tasks_from: clean_stage_area.yml

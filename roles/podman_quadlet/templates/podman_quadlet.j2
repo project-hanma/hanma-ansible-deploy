@@ -7,6 +7,9 @@ Image={{ podman_build_image_name }}
 ContainerName={{ site_container_name }}
 HostName={{ site_container_name }}
 User={{ podman_quadlet_user }}
+{% if podman_quadlet_user != "0" %}
+UserNS=keep-id:uid={{ podman_quadlet_user }},gid={{ podman_quadlet_user }}
+{% endif %}
 {% for volume in podman_quadlet_volumes %}
 Volume={{ volume }}
 {% endfor %}
