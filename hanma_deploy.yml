@@ -11,15 +11,6 @@
     - common_handlers
 
   tasks:
-    - name: Check Podman image list for Hanma
-      containers.podman.podman_image_info:
-        name: "{{ podman_build_image_name }}"
-      register: podman_check_images
-
-    - name: Determine if Hanma image was present
-      ansible.builtin.set_fact:
-        hanma_image_exists: "{{ (podman_check_images['images'] | length > 0) | ternary(true, false) }}"
-
     - name: Pull Hanma image from the registry or build the image if it doesnt exist upstream
       block:
         - name: Pull the image from registy
@@ -27,20 +18,23 @@
             name: "{{ podman_build_image_name }}"
             pull: true
             force: true
+          register: hanma_image_update
           notify: Restart Hanma
       rescue:
         - name: Build local image if necessary
-          when:
-            - not hanma_image_exists | bool
           block:
             - name: Image doesn't exist
               ansible.builtin.debug:
                 msg: |
-                  Hanma image doesn't exist locally or on the registry. Building image...
+                  Hanma image doesn't exist on the registry. Building image.
 
             - name: Build Podman container image
               ansible.builtin.include_role:
                 name: podman_build
+
+            - name: Set restart flag for post-deployment # noqa: no-handler
+              ansible.builtin.set_fact:
+                restart_site: true
 
     - name: Deploy Hanma Podman quadlet
       ansible.builtin.include_role:
@@ -54,8 +48,8 @@
       ansible.builtin.include_role:
         name: "{{ hanma_stage_directory is defined | ternary('local_site', 'git_site') }}"
 
-    - name: Ensure Hanma is running
+    - name: Ensure Hanma is running/restarted
       ansible.builtin.systemd_service:
         name: "{{ site_container_name }}.service"
-        state: started
+        state: "{{ restart_site | default(false) | ternary('restarted', 'started') }}"
         scope: user

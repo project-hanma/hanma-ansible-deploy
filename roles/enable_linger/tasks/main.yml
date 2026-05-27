@@ -1,4 +1,11 @@
 ---
+- name: Verify user linger status
+  ansible.builtin.stat:
+    path: "/var/lib/systemd/linger/{{ site_owner }}"
+  register: enable_linger_stat
+
 - name: Ensure linger is enabled for user
   ansible.builtin.command: "loginctl enable-linger {{ site_owner }}"
   changed_when: false
+  when:
+    - not enable_linger_stat['stat']['exists'] | bool

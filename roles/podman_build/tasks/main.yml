@@ -1,6 +1,4 @@
 ---
-# Clone Hanma repo
-# Build image
 - name: Fetch Hanma source from Git
   ansible.builtin.git:
     repo: "{{ podman_build_hanma_src }}"
@@ -14,6 +12,7 @@
     pull: false
     push: false
     state: build
+    force: true
     build:
       cache: true
       file: "{{ podman_build_build_path }}/Containerfile"
@@ -22,3 +21,7 @@
   ansible.builtin.file:
     path: "{{ podman_build_build_path }}"
     state: absent
+
+- name: Clean up the old image(s) post-build
+  ansible.builtin.command: podman image prune -f
+  changed_when: false
