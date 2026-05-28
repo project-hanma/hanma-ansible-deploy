@@ -32,6 +32,9 @@
               ansible.builtin.include_role:
                 name: podman_build
 
+            - name: Trigger build/cleanup handlers
+              ansible.builtin.meta: flush_handlers
+
             - name: Set restart flag for post-deployment # noqa: no-handler
               ansible.builtin.set_fact:
                 restart_site: true

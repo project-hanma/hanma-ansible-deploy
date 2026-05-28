@@ -5,8 +5,6 @@
     dest: "{{ podman_build_build_path }}"
     version: "{{ podman_build_hanma_branch | default('main') }}"
     force: true
-  notify: Build Hanma container image
-
-- name: Clean up the old image(s) post-build
-  ansible.builtin.command: "podman image prune -f --filter 'label=app=hanma'"
-  changed_when: false
+  notify:
+    - Build Hanma container image
+    - Clean up the old image
