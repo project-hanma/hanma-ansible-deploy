@@ -9,21 +9,22 @@ This Ansible project is used to build, configure, and deploy the **Hanma** Pytho
 - **`hosts`**: The Ansible inventory file, categorizing hosts (e.g., `dashboard_prod`, `hanma_dev`, `pi_dev`).
 - **`vars/`**: Directory containing environment-specific variables for deployment configurations (`dashboard_prod.yml`, `hanma_dev.yml`, `pi_dev.yml`).
 - **`roles/`**: Directory containing various roles used by the playbook:
-  - `podman_build`: Builds the Hanma Podman container image if it does not exist in the registry or locally.
+  - `podman_build`: Manages idempotent container image builds using a persistent, hidden context. It only triggers builds when the Hanma source code is updated or the image is missing.
   - `podman_quadlet`: Sets up the Podman quadlet `.container` file for systemd integration.
   - `enable_linger`: Enables systemd loginctl linger to allow rootless containers to start automatically and persist after the user logs out.
   - `git_site` / `local_site`: Deploys the site content either by pulling from a Git repository or synchronizing local files.
-  - `stage_area`, `common_handlers`, `synchronize_site`: Utility roles.
+  - `stage_area`, `common_handlers`, `synchronize_site`: Utility roles. `common_handlers` orchestrates reactive restarts and targeted image pruning using strategically placed handler synchronization (flushing).
 
 ## Deployment Flow
 
 When running the main playbook, it executes the following steps:
-1. Checks for the existence of the configured Podman image (`podman_build_image_name`).
-2. Pulls the image from the registry, or falls back to building it from the Hanma source repository using the `podman_build` role.
+1. Validates the deployment environment and loads host-specific variables.
+2. Attempts to pull the image from the registry. If unavailable, triggers an idempotent local build that only compiles if source code changes are detected or the image is missing locally.
 3. Deploys the Hanma Podman quadlet unit file into the user's `~/.config/containers/systemd/` directory.
 4. Ensures `loginctl enable-linger` is active for the target user to support rootless background services.
 5. Deploys the site's content via the appropriate role (`git_site` or `local_site`), checking out or synchronizing configuration and static content.
-6. Starts and enables the newly created systemd user service (`<site_container_name>.service`).
+6. Synchronizes handlers to ensure all build, configuration, and site changes are resolved.
+7. Selectively starts or restarts the systemd user service (`<site_container_name>.service`) only when changes are detected in the image, configuration, or site content.
 
 ## Usage
 

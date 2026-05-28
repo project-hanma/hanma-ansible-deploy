@@ -8,9 +8,16 @@ All notable changes to the **Hanma Ansible Deploy** project will be documented i
 *May 27, 2026*
 
 > [!TIP]
-> This milestone optimizes the local build lifecycle by implementing Git-aware idempotency and surgical image cleanup. By persisting build contexts and using targeted labels, deployment times are reduced and shared host resources are protected from aggressive image pruning. This final iteration ensures correct task sequencing using handler flushes.
+> This milestone optimizes the local build lifecycle by implementing Git-aware idempotency and surgical image cleanup. By persisting build contexts and using targeted labels, deployment times are reduced and shared host resources are protected from aggressive image pruning. This final iteration ensures correct task sequencing and fully reactive service restarts using strategically placed handler flushes.
 
 ### Commits
+* **56948a7** — *refactor: implement reactive service restarts via handler flushes* (Chris Hammer)
+  * **Intent:** Transition the service restart logic from an unconditional model to a purely reactive one.
+  * **Rationale:** 
+    * **Reactive Restarts:** Removed manual `restart_site` fact toggling in favor of global handler notifications across build, pull, and config tasks.
+    * **Final Synchronization:** Added a terminal `flush_handlers` meta-task to ensure all state changes (including image and config updates) are resolved before the final systemd service state is enforced.
+  * **Files Modified:** `hanma_deploy.yml`, `roles/podman_build/tasks/main.yml`
+
 * **7920803** — *refactor: finalize podman build sequence and handler timing* (Chris Hammer)
   * **Intent:** Ensure deterministic build-before-deploy execution and clean handler sequencing.
   * **Rationale:** 

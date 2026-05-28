@@ -8,3 +8,4 @@
   notify:
     - Build Hanma container image
     - Clean up the old image
+    - Restart Hanma
