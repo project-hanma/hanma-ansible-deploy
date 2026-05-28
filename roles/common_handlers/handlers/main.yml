@@ -19,3 +19,7 @@
       cache: true
       file: "{{ podman_build_build_path }}/Containerfile"
       extra_args: "--label app={{ site_container_name }}"
+
+- name: Clean up the old image
+  ansible.builtin.command: "podman image prune -f --filter 'label=app={{ site_container_name }}'"
+  changed_when: false
