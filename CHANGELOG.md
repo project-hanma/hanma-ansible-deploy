@@ -8,9 +8,17 @@ All notable changes to the **Hanma Ansible Deploy** project will be documented i
 *May 27, 2026*
 
 > [!TIP]
-> This milestone optimizes the local build lifecycle by implementing Git-aware idempotency and surgical image cleanup. By persisting build contexts and using targeted labels, deployment times are reduced and shared host resources are protected from aggressive image pruning.
+> This milestone optimizes the local build lifecycle by implementing Git-aware idempotency and surgical image cleanup. By persisting build contexts and using targeted labels, deployment times are reduced and shared host resources are protected from aggressive image pruning. This final iteration ensures correct task sequencing using handler flushes.
 
 ### Commits
+* **7920803** — *refactor: finalize podman build sequence and handler timing* (Chris Hammer)
+  * **Intent:** Ensure deterministic build-before-deploy execution and clean handler sequencing.
+  * **Rationale:** 
+    * **Handler Synchronization:** Integrated `ansible.builtin.meta: flush_handlers` in the main deployment playbook to force container builds to complete before systemd service startup.
+    * **Resilient Cleanup:** Transitioned the image pruning routine into a handler to guarantee it only executes after a successful image build.
+    * **Label Consistency:** Synchronized label filters across build and cleanup handlers using the variablized `site_container_name` for precise cache management.
+  * **Files Modified:** `hanma_deploy.yml`, `roles/common_handlers/handlers/main.yml`, `roles/podman_build/tasks/main.yml`
+
 * **ddb42bb** — *refactor: optimize podman build idempotency and pruning* (Chris Hammer)
   * **Intent:** Transform the build role into a reactive, idempotent process.
   * **Rationale:** 
