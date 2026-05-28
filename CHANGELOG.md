@@ -4,6 +4,29 @@ All notable changes to the **Hanma Ansible Deploy** project will be documented i
 
 ---
 
+## 🏗️ Milestone 6: Build Optimization & Idempotency Refactor
+*May 27, 2026*
+
+> [!TIP]
+> This milestone optimizes the local build lifecycle by implementing Git-aware idempotency and surgical image cleanup. By persisting build contexts and using targeted labels, deployment times are reduced and shared host resources are protected from aggressive image pruning.
+
+### Commits
+* **ddb42bb** — *refactor: optimize podman build idempotency and pruning* (Chris Hammer)
+  * **Intent:** Transform the build role into a reactive, idempotent process.
+  * **Rationale:** 
+    * **Git Persistence:** Removed the build directory cleanup task, allowing the Git module to perform delta updates instead of full clones.
+    * **Event-Driven Builds:** Relocated the build task to a handler triggered only on source changes.
+    * **Path Hidden:** Relocated the build context to `.hanma_src` across all variable files.
+    * **Targeted Pruning:** Implemented `podman image prune` with label filters to spare unrelated containers on the host.
+  * **Files Modified:** `roles/common_handlers/handlers/main.yml`, `roles/podman_build/tasks/main.yml`, `vars/*.yml`
+
+* **97b48f9** — *refactor: variablize podman build labels* (Chris Hammer)
+  * **Intent:** Ensure consistent labeling for multi-container host environments.
+  * **Rationale:** Variablized the build labels using `{{ site_container_name }}` to ensure that multiple Hanma instances on the same host can manage their own image lifecycles without interference.
+  * **Files Modified:** `roles/common_handlers/handlers/main.yml`, `roles/podman_build/tasks/main.yml`
+
+---
+
 ## 🛡️ Milestone 5: Security Hardening & Deployment Reliability
 *May 26 – May 27, 2026*
 

@@ -6,7 +6,7 @@ site_group: hanma
 site_deploy_path: "/home/{{ site_owner }}/hanma-prod"
 site_config_path: "{{ site_deploy_path }}/conf"
 site_content_path: "{{ site_deploy_path }}/site"
-site_container_name: hanma-prod
+site_container_name: hanma-dashboard-prod
 site_quadlet_path: "/home/{{ site_owner }}/.config/containers/systemd/{{ site_container_name }}.container"
 site_port: 8005
 
@@ -14,7 +14,7 @@ site_port: 8005
 podman_build_image_name: "gitea.thezengarden.net/project-hanma/hanma:latest"
 podman_build_hanma_src: https://gitea.thezengarden.net/project-hanma/hanma.git
 podman_build_hanma_branch: main
-podman_build_build_path: hanma_src
+podman_build_build_path: "/home/{{ site_owner }}/.hanma_src"
 
 # Podman Quadlet Vars:
 podman_quadlet_description: "Hanma Python Application"
