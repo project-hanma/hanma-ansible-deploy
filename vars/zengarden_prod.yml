@@ -6,7 +6,7 @@ site_group: zengarden
 site_deploy_path: "/home/{{ site_owner }}/thezengarden"
 site_config_path: "{{ site_deploy_path }}/conf"
 site_content_path: "{{ site_deploy_path }}/site"
-site_container_name: thezengarden
+site_container_name: hanma-thezengarden
 site_quadlet_path: "/home/{{ site_owner }}/.config/containers/systemd/{{ site_container_name }}.container"
 site_port: 8066
 

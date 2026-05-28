@@ -18,4 +18,4 @@
     build:
       cache: true
       file: "{{ podman_build_build_path }}/Containerfile"
-      extra_args: "--label app=hanma"
+      extra_args: "--label app={{ site_container_name }}"

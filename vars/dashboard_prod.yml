@@ -6,7 +6,7 @@ site_group: hanma
 site_deploy_path: "/home/{{ site_owner }}/hanma-prod"
 site_config_path: "{{ site_deploy_path }}/conf"
 site_content_path: "{{ site_deploy_path }}/site"
-site_container_name: hanma-prod
+site_container_name: hanma-dashboard-prod
 site_quadlet_path: "/home/{{ site_owner }}/.config/containers/systemd/{{ site_container_name }}.container"
 site_port: 8005
 
