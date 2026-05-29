@@ -9,3 +9,18 @@
     - Build Hanma container image
     - Clean up the old image
     - Restart Hanma
+
+# In case git status doesnt change, and image doesnt exist:
+- name: Check if local image exists
+  containers.podman.podman_image_info:
+    name: "{{ podman_build_image_name }}"
+  register: podman_build_image_info
+
+- name: Force build notifies if image is missing
+  ansible.builtin.command: /bin/true
+  changed_when: true
+  when: podman_build_image_info['images'] | length == 0
+  notify:
+    - Build Hanma container image
+    - Clean up the old image
+    - Restart Hanma
