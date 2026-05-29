@@ -18,6 +18,7 @@ Exec={{ podman_quadlet_exec }}
 
 [Service]
 Restart={{ podman_quadlet_restart_policy }}
+TimeoutStartSec={{ podman_quadlet_timeout_start_sec | default('300') }}
 
 [Install]
 WantedBy={{ podman_quadlet_wanted_by }}

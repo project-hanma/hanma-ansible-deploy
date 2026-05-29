@@ -27,6 +27,7 @@ podman_quadlet_volumes:
 podman_quadlet_port: "{{ site_port }}:8000"
 podman_quadlet_exec: "/site"
 podman_quadlet_restart_policy: "always"
+podman_quadlet_timeout_start_sec: 300
 podman_quadlet_wanted_by: "default.target"
 podman_quadlet_after: "network-online.target"
 
