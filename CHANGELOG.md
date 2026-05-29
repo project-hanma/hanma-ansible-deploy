@@ -4,6 +4,27 @@ All notable changes to the **Hanma Ansible Deploy** project will be documented i
 
 ---
 
+## 🛡️ Milestone 7: Post-Audit Refinements & Build Reliability
+*May 29, 2026*
+
+> [!IMPORTANT]
+> This milestone addresses critical edge cases identified during a comprehensive codebase audit. The primary focus is ensuring deployment reliability when local host state is out-of-sync with Git source, and reconciling intentional design decisions (like system info disclosure and `/tmp` usage) with the project's long-term maintenance roadmap.
+
+### Commits
+* **3691920** — *fix: ensure image build triggers if local image is missing* (Chris Hammer)
+  * **Intent:** Guarantee container builds occur even if the Git source is already up-to-date.
+  * **Rationale:** 
+    * **State Verification:** Added a `podman_image_info` check to the `podman_build` role.
+    * **Conditional Notification:** Implemented a forced handler notification if the target image is missing locally. This prevents silent deployment failures in scenarios where the image was removed but no new source changes are present to trigger a standard build notification.
+  * **Files Modified:** `roles/common_handlers/handlers/main.yml`, `roles/podman_build/tasks/main.yml`
+
+* **Manual Update** — *chore: consolidate and document intentional design decisions* (Chris Hammer)
+  * **Intent:** Formally acknowledge and document project-specific architectural choices.
+  * **Rationale:** Updated project auditing documentation (`PLAN-audit-527.md`, `PLAN-audit-529.md`) to categorize system info disclosure, `/tmp` usage, and floating branch targets as intentional features. This ensures that future audits remain focused on regressions rather than established project requirements.
+  * **Files Modified:** `planning/PLAN-audit-527.md`, `planning/PLAN-audit-529.md`
+
+---
+
 ## 🏗️ Milestone 6: Build Optimization & Idempotency Refactor
 *May 27, 2026*
 
