@@ -12,10 +12,11 @@ All notable changes to the **Hanma Ansible Deploy** project will be documented i
 
 ### Commits
 * **3691920** — *fix: ensure image build triggers if local image is missing* (Chris Hammer)
-  * **Intent:** Guarantee container builds occur even if the Git source is already up-to-date.
+  * **Intent:** Guarantee container builds occur even if the Git source is already up-to-date and ensure correct task sequencing.
   * **Rationale:** 
     * **State Verification:** Added a `podman_image_info` check to the `podman_build` role.
     * **Conditional Notification:** Implemented a forced handler notification if the target image is missing locally. This prevents silent deployment failures in scenarios where the image was removed but no new source changes are present to trigger a standard build notification.
+    * **Handler Sequencing:** Re-ordered handlers in `common_handlers` to ensure `Reload systemd` and `Restart Hanma` occur only after image building and pruning are complete, providing a deterministic state for the final service restart.
   * **Files Modified:** `roles/common_handlers/handlers/main.yml`, `roles/podman_build/tasks/main.yml`
 
 * **Manual Update** — *chore: consolidate and document intentional design decisions* (Chris Hammer)
