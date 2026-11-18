@@ -22,4 +22,4 @@
 
 - name: Restart Hanma
   ansible.builtin.set_fact:
-    restart_site: true
+    common_handlers_restart_site: true
