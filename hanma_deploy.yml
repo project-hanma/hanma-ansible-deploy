@@ -54,5 +54,5 @@
     - name: Ensure Hanma is running/restarted
       ansible.builtin.systemd_service:
         name: "{{ site_container_name }}.service"
-        state: "{{ restart_site | default(false) | ternary('restarted', 'started') }}"
+        state: "{{ common_handlers_restart_site | default(false) | ternary('restarted', 'started') }}"
         scope: user
