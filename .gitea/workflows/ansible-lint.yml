@@ -15,7 +15,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Clone repository
-        uses: actions/checkout@v3
+        run: |
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --depth 1 origin "${GITHUB_SHA}"
+          git checkout FETCH_HEAD
 
       - name: Ansible Environment Verify
         run: |
